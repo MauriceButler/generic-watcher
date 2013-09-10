@@ -18,5 +18,12 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/MauriceButler/generic-watcher/issues"
+  },
+  "dependencies": {
+    "commander": "2.x.x",
+    "node-watch": "0.3.x"
+  },
+  "bin": {
+    "gw": "index.js"
   }
 }

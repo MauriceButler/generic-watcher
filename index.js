@@ -1,42 +1,29 @@
 #!/usr/bin/env node
 
-var fs = require('fs'),
-    path = require('path'),
-    fork = require('child_process').fork,
-    watchPath = '../../public/app',
-    throttle = 300,
-    moduleToRun,
-    excludedFiles = [],
-    throttleTimeout;
-
-
-
 var program = require('commander'),
     fs = require('fs'),
+    watch = require('node-watch'),
     path = require('path'),
     packageJson = require('./package.json'),
+    fork = require('child_process').fork,
     watchPath = './',
     throttle = 300,
     throttleTimeout;
 
 program._name = 'generic-watcher';
 
+function list(value) {
+    return value.split(',') || [];
+}
+
 program
     .version(packageJson.version)
     .option('-v, --verbose', 'Verbose output')
-    .option('-w, --watch [path]', 'Watch Path [default ' + watchPath +']',  String, watchPath)
-    .option('-t, --throttle [milliseconds]', 'Minimum time between processing (milliseconds) [default ' + throttle +']', Number, throttle)
-    .option('-m, --module [path]', 'Path to Node module to run', String, moduleToRun)
-    .option('-e, --excludedFiles [paths]', 'Files to excluded from triggering', String, excludedFiles)
+    .option('-w, --watch [path]', 'Watch Path [default ' + watchPath +']', watchPath)
+    .option('-t, --throttle [milliseconds]', 'Minimum time between processing [default ' + throttle +']', throttle)
+    .option('-m, --module [path]', 'Path to Node module to run')
+    .option('-e, --excludedFiles <files>', 'Files to excluded from triggering', list)
     .parse(process.argv);
-
-
-function hasError(error){
-    if(error){
-        console.log(error.stack || error);
-        return true;
-    }
-}
 
 function tryToProcess(filename){
     var now = new Date();
@@ -44,15 +31,15 @@ function tryToProcess(filename){
     clearTimeout(throttleTimeout);
     throttleTimeout = setTimeout(function(){
             processFile(filename);
-        }, throttle);
+        }, program.throttle);
 }
 
 function processFile(filename) {
     if(filename){
-        log('Processing triggered by save on: ' + filename);
+        console.log('Processing triggered by save on: ' + filename);
     }
 
-    fork(moduleToRun);
+    fork(program.module);
 }
 
 if(!program.module){
@@ -60,21 +47,18 @@ if(!program.module){
     return process.exit(1);
 }
 
-if(program.excludedFiles && program.excludedFiles.length){
-    excludedFiles = program.excludedFiles.split(',');
+if(!program.excludedFiles){
+    program.excludedFiles = [];
 }
 
-console.log('Watching ' + watchPath + ' for changes.');
+console.log('Watching ' + program.watch + ' for changes.');
 
 tryToProcess();
 
-fs.watch(watchPath, function(eventType, filename){
-    if(eventType !== 'change' ||
-        path.extname(filename).toLowerCase() !== '.js' ||
-        path.extname(filename).toLowerCase() !== '.scss' ||
-        ~excludedFiles.indexOf(filename.toLowerCase())){
+watch(program.watch, function(filename){
+    if(path.extname(filename) !== '.js' ||
+        ~program.excludedFiles.indexOf(path.basename(filename))){
         return;
     }
-
     tryToProcess(filename);
 });
