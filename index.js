@@ -10,7 +10,7 @@ var program = require('commander'),
     throttle = 300,
     throttleTimeout;
 
-program._name = 'generic-watcher';
+program._name = 'gw';
 
 function list(value) {
     return value.split(',') || [];

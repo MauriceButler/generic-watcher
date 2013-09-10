@@ -1,6 +1,6 @@
 {
   "name": "generic-watcher",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "generic-watcher\r ===============",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "commander": "2.x.x",
     "node-watch": "0.3.x"
   },
+  "preferGlobal": "true",
   "bin": {
     "gw": "index.js"
   }
