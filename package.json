@@ -1,6 +1,6 @@
 {
   "name": "generic-watcher",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "generic-watcher\r ===============",
   "main": "index.js",
   "scripts": {

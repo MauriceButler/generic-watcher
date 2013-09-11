@@ -23,6 +23,7 @@ program
     .option('-t, --throttle [milliseconds]', 'Minimum time between processing [default ' + throttle +']', throttle)
     .option('-m, --module [path]', 'Path to Node module to run')
     .option('-a, --arguments <args>', 'Arguments to pass to Node module to run', list)
+    .option('-i, --includedExtentions <files>', 'Files extentions to include', list)
     .option('-e, --excludedFiles <files>', 'Files to excluded from triggering', list)
     .parse(process.argv);
 
@@ -57,7 +58,7 @@ console.log('Watching ' + program.watch + ' for changes.');
 tryToProcess();
 
 watch(program.watch, function(filename){
-    if(path.extname(filename) !== '.js' ||
+    if((program.includedExtentions.length && !~program.includedExtentions.indexOf(path.extname(filename))) ||
         ~program.excludedFiles.indexOf(path.basename(filename))){
         return;
     }
