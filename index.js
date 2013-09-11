@@ -22,6 +22,7 @@ program
     .option('-w, --watch [path]', 'Watch Path [default ' + watchPath +']', watchPath)
     .option('-t, --throttle [milliseconds]', 'Minimum time between processing [default ' + throttle +']', throttle)
     .option('-m, --module [path]', 'Path to Node module to run')
+    .option('-a, --arguments <args>', 'Arguments to pass to Node module to run', list)
     .option('-e, --excludedFiles <files>', 'Files to excluded from triggering', list)
     .parse(process.argv);
 
@@ -39,7 +40,7 @@ function processFile(filename) {
         console.log('Processing triggered by save on: ' + filename);
     }
 
-    fork(program.module);
+    fork(program.module, program.arguments);
 }
 
 if(!program.module){
