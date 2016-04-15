@@ -26,5 +26,6 @@
   "preferGlobal": "true",
   "bin": {
     "gw": "index.js"
-  }
+  },
+  "homepage": "https://github.com/MauriceButler/generic-watcher#readme"
 }
